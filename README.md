@@ -112,12 +112,43 @@ python3 setup.py uninstall
 
 ## Contributing
 
-This is a learning project that can be extended with:
-- Additional lesson content
-- More interactive exercises
-- Quiz systems
-- Achievement badges
-- Integration with real Linux environments
+This is a learning project that can be extended with lots of cool features! Here's our wishlist:
+
+### High Priority
+- [ ] quiz system - add some questions after lessons so ppl actually learn stuff
+- [ ] safe command simulator - tired of people breaking their systems lol
+- [ ] Docker integration - each lesson in container (IMPORTANT)
+- [ ] HACKER LEVEL - kernel exploits, rootkits, reverse eng (the fun stuff)
+- [ ] red team track - pentest, social eng, osint
+- [ ] docker labs for every lesson - isolated environments
+- [ ] vulnerable VMs for hacking practice (legally obvs)
+- [ ] CTF challenges - real security scenarios with flags
+- [ ] advanced docker security - container escapes, privesc
+
+### Medium Priority
+- [ ] gamification would be cool - badges, streaks, maybe points?
+- [ ] difficulty ratings + adaptive paths based on how user is doing
+- [ ] integrate with man pages - linuxtutor man ls or something
+- [ ] search lessons by keyword - basic feature we're missing
+- [ ] distro-specific content - ubuntu vs arch commands are different
+- [ ] track how long lessons take, performance metrics
+- [ ] practice challenges / competitions - make it fun
+- [ ] lesson feedback system - let users rate lessons
+- [ ] community content tools - let others write lessons
+- [ ] smarter prereq checking - don't let noobs jump to advanced
+- [ ] kubernetes module - containers are huge now
+- [ ] defensive security - malware analysis, incident response
+- [ ] cloud pentest modules - aws/azure/gcp security
+- [ ] network forensics + wireshark training
+
+### Nice to Have
+- [ ] certificates for completing stuff (people love showing off)
+- [ ] progress charts in terminal would look sick
+- [ ] bookmark favorite lessons
+- [ ] multi-language support (spanish, french, etc)
+- [ ] group learning features??? maybe overkill
+- [ ] export progress to pdf/csv - managers love reports
+- [ ] accessibility - voice narration for blind users
 
 ## Example Sessions
 
