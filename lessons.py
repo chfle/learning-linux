@@ -245,6 +245,12 @@ def run_lesson(lesson: Dict[str, Any], tutor) -> None:
     print(f"Starting: {lesson['title']}")
     print(f"{'='*50}\n")
     
+    # Track simulated file system state for this lesson
+    simulated_fs = {
+        'directories': set(),
+        'files': {},  # filename -> content
+    }
+    
     for i, section in enumerate(lesson['content'], 1):
         print(f"\n--- Section {i}: {section['title']} ---\n")
         
@@ -272,17 +278,121 @@ def run_lesson(lesson: Dict[str, Any], tutor) -> None:
                     try:
                         print(f"\n$ {cmd_info['cmd']}")
                         
-                        # Safe commands that we can actually run
-                        safe_commands = ['whoami', 'pwd', 'date', 'uname', 'ls', 'echo', 'cat']
+                        # Parse command
                         cmd_parts = cmd_info['cmd'].split()
+                        cmd = cmd_parts[0]
                         
-                        if cmd_parts[0] in safe_commands:
+                        # Handle different commands
+                        if cmd in ['whoami', 'pwd', 'date', 'uname']:
+                            # These are safe to run directly
                             result = subprocess.run(cmd_info['cmd'], shell=True, 
                                                  capture_output=True, text=True)
                             if result.returncode == 0:
                                 print(result.stdout)
                             else:
                                 print(f"Error: {result.stderr}")
+                                
+                        elif cmd == 'mkdir':
+                            # Simulate directory creation
+                            if len(cmd_parts) > 1:
+                                dirname = cmd_parts[1]
+                                simulated_fs['directories'].add(dirname)
+                                print(f"[SIMULATION] Created directory: {dirname}")
+                            else:
+                                print("[SIMULATION] This command would create a directory")
+                                
+                        elif cmd == 'touch':
+                            # Simulate file creation
+                            if len(cmd_parts) > 1:
+                                filename = cmd_parts[1]
+                                simulated_fs['files'][filename] = ""
+                                print(f"[SIMULATION] Created empty file: {filename}")
+                            else:
+                                print("[SIMULATION] This command would create an empty file")
+                                
+                        elif cmd == 'echo' and '>' in cmd_info['cmd']:
+                            # Simulate file writing
+                            parts = cmd_info['cmd'].split('>')
+                            if len(parts) == 2:
+                                content = parts[0].split('echo')[1].strip().strip('"\'')
+                                filename = parts[1].strip()
+                                simulated_fs['files'][filename] = content
+                                print(f"[SIMULATION] Wrote '{content}' to {filename}")
+                            else:
+                                print("[SIMULATION] This command would write to a file")
+                                
+                        elif cmd == 'cat':
+                            # Simulate file reading
+                            if len(cmd_parts) > 1:
+                                filename = cmd_parts[1]
+                                if filename in simulated_fs['files']:
+                                    content = simulated_fs['files'][filename]
+                                    print(content if content else f"[SIMULATION] {filename} is empty")
+                                else:
+                                    print(f"[SIMULATION] File {filename} not found (would show error)")
+                            else:
+                                print("[SIMULATION] This command would display file contents")
+                                
+                        elif cmd == 'cp':
+                            # Simulate file copying
+                            if len(cmd_parts) >= 3:
+                                src = cmd_parts[1]
+                                dst = cmd_parts[2]
+                                if src in simulated_fs['files']:
+                                    simulated_fs['files'][dst] = simulated_fs['files'][src]
+                                    print(f"[SIMULATION] Copied {src} to {dst}")
+                                else:
+                                    print(f"[SIMULATION] Would copy {src} to {dst}")
+                            else:
+                                print("[SIMULATION] This command would copy a file")
+                                
+                        elif cmd == 'mv':
+                            # Simulate file moving
+                            if len(cmd_parts) >= 3:
+                                src = cmd_parts[1]
+                                dst = cmd_parts[2]
+                                if dst.endswith('/'):
+                                    # Moving to directory
+                                    dirname = dst.rstrip('/')
+                                    if dirname in simulated_fs['directories']:
+                                        if src in simulated_fs['files']:
+                                            new_path = f"{dirname}/{src}"
+                                            simulated_fs['files'][new_path] = simulated_fs['files'][src]
+                                            del simulated_fs['files'][src]
+                                            print(f"[SIMULATION] Moved {src} to {dirname}/")
+                                        else:
+                                            print(f"[SIMULATION] Would move {src} to {dirname}/")
+                                    else:
+                                        print(f"[SIMULATION] Directory {dirname} doesn't exist")
+                                else:
+                                    print(f"[SIMULATION] Would move/rename {src} to {dst}")
+                            else:
+                                print("[SIMULATION] This command would move/rename a file")
+                                
+                        elif cmd == 'ls':
+                            # Simulate directory listing
+                            if len(cmd_parts) > 1:
+                                target = cmd_parts[1].rstrip('/')
+                                if target in simulated_fs['directories']:
+                                    # List files in the directory
+                                    files_in_dir = [f.split('/')[-1] for f in simulated_fs['files'].keys() 
+                                                  if f.startswith(f"{target}/")]
+                                    if files_in_dir:
+                                        print('\n'.join(files_in_dir))
+                                    else:
+                                        print(f"[SIMULATION] Directory {target}/ is empty")
+                                else:
+                                    print(f"[SIMULATION] Directory {target} doesn't exist")
+                            else:
+                                # List current directory - show simulated files
+                                current_files = [f for f in simulated_fs['files'].keys() if '/' not in f]
+                                current_dirs = list(simulated_fs['directories'])
+                                all_items = current_dirs + current_files
+                                if all_items:
+                                    print('\n'.join(all_items))
+                                else:
+                                    print("[SIMULATION] Current directory appears empty")
+                                    
                         else:
                             print(f"[SIMULATION] This command would execute: {cmd_info['cmd']}")
                             print("(In a real environment, you would run this command)")
