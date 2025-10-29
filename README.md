@@ -1,6 +1,6 @@
-# LinuxTutor 🐧
+# LinuxTutor
 
-An interactive CLI application for learning Linux from basics to expert level. LinuxTutor provides structured lessons, hands-on exercises, and progress tracking to help you master Linux command line skills.
+A comprehensive interactive command-line learning platform for mastering Linux from beginner to expert level. This educational tool provides structured lessons, hands-on exercises, and progress tracking to help users develop essential Linux command line skills through practical experience.
 
 ## Features
 
@@ -29,7 +29,7 @@ source ~/.bashrc
 ### Basic Usage
 
 ```bash
-# 🚀 The easiest way to start (perfect for new users!)
+# The easiest way to start (perfect for new users!)
 linuxtutor start
 
 # Other useful commands:
@@ -42,28 +42,28 @@ linuxtutor help                          # Get help
 
 ## Learning Path
 
-### 🟢 Beginner Level
+### Beginner Level
 - **intro-to-terminal**: Introduction to the Terminal
 - **file-system-basics**: Linux File System Basics  
 - **basic-commands**: Essential Linux Commands
 - **file-permissions**: Understanding File Permissions
 - **text-editors**: Working with Text Editors
 
-### 🟡 Intermediate Level
+### Intermediate Level
 - **process-management**: Process Management
 - **text-processing**: Text Processing Tools
 - **file-operations**: Advanced File Operations
 - **networking-basics**: Basic Networking Commands
 - **package-management**: Package Management
 
-### 🟠 Advanced Level
+### Advanced Level
 - **shell-scripting**: Introduction to Shell Scripting
 - **system-administration**: System Administration
 - **log-analysis**: Log File Analysis
 - **security-basics**: Linux Security Fundamentals
 - **performance-monitoring**: Performance Monitoring
 
-### 🔴 Expert Level
+### Expert Level
 - **kernel-concepts**: Linux Kernel Concepts
 - **advanced-networking**: Advanced Networking
 - **performance-tuning**: Linux Performance Tuning
@@ -155,7 +155,7 @@ This is a learning project that can be extended with lots of cool features! Here
 ### First-Time User
 ```bash
 $ linuxtutor start
-🐧 Welcome to LinuxTutor!
+Welcome to LinuxTutor!
 ==================================================
 
 You're about to start your Linux learning journey!
@@ -169,7 +169,7 @@ Here's how it works:
 
 Ready to start your first lesson? [Y/n]: y
 
-🚀 Let's begin with the basics!
+Let's begin with the basics!
 === Introduction to the Terminal ===
 Level: Beginner
 Duration: ~15 minutes
@@ -179,9 +179,9 @@ Duration: ~15 minutes
 ### Returning User
 ```bash
 $ linuxtutor start
-🐧 Welcome back to LinuxTutor!
+Welcome back to LinuxTutor!
 ========================================
-📖 You have an ongoing lesson: File System Basics
+You have an ongoing lesson: File System Basics
 Continue this lesson? [Y/n]: y
 
 ==================================================
@@ -196,7 +196,7 @@ This project is created for educational purposes. Feel free to use, modify, and 
 
 ---
 
-**Happy Learning!** 🚀
+**Happy Learning!**
 
 Start your Linux journey today with:
 ```bash
