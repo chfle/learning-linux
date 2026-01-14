@@ -9,6 +9,7 @@ A comprehensive interactive command-line learning platform for mastering Linux f
 - **Safe Practice Environment**: Simulated commands for safe learning
 - **Progress Tracking**: Keep track of completed lessons and achievements
 - **Comprehensive Coverage**: Topics from basic navigation to advanced system administration
+- **Smart Search**: Full-text search across all lessons with relevance ranking and context snippets
 
 ## Quick Start
 
@@ -37,6 +38,8 @@ linuxtutor status                        # Check your progress
 linuxtutor lessons                       # List available lessons
 linuxtutor lesson intro-to-terminal      # Start a specific lesson
 linuxtutor level intermediate            # Change your skill level
+linuxtutor search file security          # Search lessons by keywords
+linuxtutor search process --level intermediate  # Search with level filter
 linuxtutor help                          # Get help
 ```
 
@@ -85,6 +88,7 @@ LinuxTutor creates a personalized learning experience:
 learning-linux/
 ├── linuxtutor.py      # Main CLI application
 ├── lessons.py         # Lesson content and exercises
+├── test_search.py     # Comprehensive test suite for search feature
 ├── setup.py          # Installation script
 └── README.md         # This file
 ```
@@ -129,7 +133,7 @@ This is a learning project that can be extended with lots of cool features! Here
 - [ ] gamification would be cool - badges, streaks, maybe points?
 - [ ] difficulty ratings + adaptive paths based on how user is doing
 - [ ] integrate with man pages - linuxtutor man ls or something
-- [ ] search lessons by keyword - basic feature we're missing
+- [x] search lessons by keyword - DONE! Full-text search with relevance ranking
 - [ ] distro-specific content - ubuntu vs arch commands are different
 - [ ] track how long lessons take, performance metrics
 - [ ] practice challenges / competitions - make it fun
@@ -188,6 +192,42 @@ Continue this lesson? [Y/n]: y
 Starting: Linux File System Basics
 ==================================================
 ...
+```
+
+### Searching for Lessons
+```bash
+$ linuxtutor search file security
+Found 1 lesson matching: file, security
+
+1. [Advanced] Linux Security Fundamentals (Score: 28)
+   Duration: 40 minutes
+   Matched in: title, description, section_title, text, command_desc
+
+   Description:
+   "Learn essential Linux security concepts and best practices."
+
+   Section:
+   "Linux Security Concepts"
+
+To start a lesson, run: linuxtutor lesson <lesson-name>
+```
+
+## Search Feature
+
+The search command helps you quickly find relevant lessons:
+
+- **Full-text search**: Searches titles, descriptions, section names, commands, and lesson content
+- **Multiple keywords**: Use AND logic - all keywords must match
+- **Relevance ranking**: Results sorted by relevance (title matches ranked highest)
+- **Context snippets**: See where your keywords appear in the lesson
+- **Level filtering**: Use `--level` or `-l` to filter by difficulty
+
+**Examples:**
+```bash
+linuxtutor search file                    # Find lessons about files
+linuxtutor search file security           # Find lessons with both keywords
+linuxtutor search process --level intermediate  # Search intermediate lessons only
+linuxtutor search shell script -l advanced      # Short flag version
 ```
 
 ## License

@@ -426,3 +426,231 @@ def list_all_lessons() -> Dict[str, List[str]]:
             levels[level] = []
         levels[level].append(lesson_name)
     return levels
+
+# Search functionality
+
+def _extract_snippet(text: str, keyword: str, context_chars: int = 50) -> str:
+    """
+    Extract a snippet of text around the keyword for display.
+
+    Args:
+        text: The full text to extract from
+        keyword: The keyword to find (case-insensitive)
+        context_chars: Number of characters to show before and after keyword
+
+    Returns:
+        A snippet string with context around the keyword
+    """
+    text_lower = text.lower()
+    keyword_lower = keyword.lower()
+
+    pos = text_lower.find(keyword_lower)
+    if pos == -1:
+        return ""
+
+    # Calculate start and end positions
+    start = max(0, pos - context_chars)
+    end = min(len(text), pos + len(keyword) + context_chars)
+
+    # Extract snippet
+    snippet = text[start:end]
+
+    # Add ellipsis if truncated
+    if start > 0:
+        snippet = "..." + snippet
+    if end < len(text):
+        snippet = snippet + "..."
+
+    return snippet
+
+def _calculate_score(matches: Dict[str, int]) -> int:
+    """
+    Calculate relevance score based on match counts and field weights.
+
+    Args:
+        matches: Dictionary mapping field types to match counts
+
+    Returns:
+        Total weighted score
+    """
+    weights = {
+        'title': 10,
+        'description': 5,
+        'section_title': 3,
+        'command_desc': 2,
+        'command': 2,
+        'text': 1,
+        'level': 3,
+    }
+
+    score = 0
+    for field_type, count in matches.items():
+        weight = weights.get(field_type, 1)
+        score += count * weight
+
+    return score
+
+def _search_in_lesson(lesson_data: Dict, keywords: List[str]) -> Optional[Dict]:
+    """
+    Search a single lesson for all keywords.
+
+    Args:
+        lesson_data: The lesson dictionary to search
+        keywords: List of keywords (case-insensitive, AND logic)
+
+    Returns:
+        Match info dict if ALL keywords found, None otherwise.
+        Match info contains: matches, score, fields_matched, snippets
+    """
+    from collections import defaultdict
+
+    keywords_lower = [k.lower() for k in keywords]
+    matches = defaultdict(int)  # field_type -> count
+    snippets = {}  # field_type -> snippet text
+    fields_matched = set()
+
+    # Track which keywords were found anywhere in the lesson
+    keywords_found = set()
+
+    # Search lesson title
+    title_lower = lesson_data['title'].lower()
+    for kw in keywords_lower:
+        count = title_lower.count(kw)
+        if count > 0:
+            matches['title'] += count
+            fields_matched.add('title')
+            keywords_found.add(kw)
+
+    # Search lesson description
+    desc_lower = lesson_data['description'].lower()
+    for kw in keywords_lower:
+        count = desc_lower.count(kw)
+        if count > 0:
+            matches['description'] += count
+            fields_matched.add('description')
+            keywords_found.add(kw)
+            # Extract snippet for first keyword match in description
+            if 'description' not in snippets:
+                snippets['description'] = _extract_snippet(lesson_data['description'], kw)
+
+    # Search lesson level
+    level_lower = lesson_data['level'].lower()
+    for kw in keywords_lower:
+        if kw in level_lower:
+            matches['level'] += 1
+            fields_matched.add('level')
+            keywords_found.add(kw)
+
+    # Search content sections
+    for section in lesson_data.get('content', []):
+        # Search section title
+        section_title = section.get('title', '')
+        section_title_lower = section_title.lower()
+        for kw in keywords_lower:
+            count = section_title_lower.count(kw)
+            if count > 0:
+                matches['section_title'] += count
+                fields_matched.add('section_title')
+                keywords_found.add(kw)
+                if 'section_title' not in snippets:
+                    snippets['section_title'] = _extract_snippet(section_title, kw)
+
+        # Search explanation text
+        if section.get('type') == 'explanation':
+            text = section.get('text', '')
+            text_lower = text.lower()
+            for kw in keywords_lower:
+                count = text_lower.count(kw)
+                if count > 0:
+                    matches['text'] += count
+                    fields_matched.add('text')
+                    keywords_found.add(kw)
+                    if 'text' not in snippets:
+                        snippets['text'] = _extract_snippet(text, kw)
+
+        # Search exercise instructions
+        if section.get('type') == 'exercise':
+            instructions = section.get('instructions', '')
+            instructions_lower = instructions.lower()
+            for kw in keywords_lower:
+                count = instructions_lower.count(kw)
+                if count > 0:
+                    matches['text'] += count
+                    fields_matched.add('text')
+                    keywords_found.add(kw)
+                    if 'text' not in snippets and instructions:
+                        snippets['text'] = _extract_snippet(instructions, kw)
+
+            # Search commands
+            for cmd_info in section.get('commands', []):
+                # Search command itself
+                cmd = cmd_info.get('cmd', '')
+                cmd_lower = cmd.lower()
+                for kw in keywords_lower:
+                    count = cmd_lower.count(kw)
+                    if count > 0:
+                        matches['command'] += count
+                        fields_matched.add('command')
+                        keywords_found.add(kw)
+                        if 'command' not in snippets:
+                            snippets['command'] = _extract_snippet(cmd, kw)
+
+                # Search command description
+                cmd_desc = cmd_info.get('description', '')
+                cmd_desc_lower = cmd_desc.lower()
+                for kw in keywords_lower:
+                    count = cmd_desc_lower.count(kw)
+                    if count > 0:
+                        matches['command_desc'] += count
+                        fields_matched.add('command_desc')
+                        keywords_found.add(kw)
+                        if 'command_desc' not in snippets:
+                            snippets['command_desc'] = _extract_snippet(cmd_desc, kw)
+
+    # Check if ALL keywords were found (AND logic)
+    if len(keywords_found) != len(keywords_lower):
+        return None
+
+    # Calculate score
+    score = _calculate_score(matches)
+
+    return {
+        'matches': matches,
+        'score': score,
+        'fields_matched': fields_matched,
+        'snippets': snippets
+    }
+
+def search_lessons(keywords: List[str]) -> List[Dict[str, Any]]:
+    """
+    Search all lessons for keywords with AND logic and relevance ranking.
+
+    Args:
+        keywords: List of search terms (case-insensitive, all must match)
+
+    Returns:
+        List of match result dicts, sorted by relevance (highest first).
+        Each result contains:
+        - lesson_id: Lesson identifier
+        - lesson_data: Full lesson dictionary
+        - score: Relevance score
+        - fields_matched: Set of field types where keywords were found
+        - snippets: Dict mapping field types to text snippets
+    """
+    results = []
+
+    for lesson_id, lesson_data in LESSONS.items():
+        match_info = _search_in_lesson(lesson_data, keywords)
+        if match_info:
+            results.append({
+                'lesson_id': lesson_id,
+                'lesson_data': lesson_data,
+                'score': match_info['score'],
+                'fields_matched': match_info['fields_matched'],
+                'snippets': match_info['snippets']
+            })
+
+    # Sort by score (highest first)
+    results.sort(key=lambda x: x['score'], reverse=True)
+
+    return results

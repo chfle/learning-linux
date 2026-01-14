@@ -128,11 +128,93 @@ class LinuxTutor:
         if level not in valid_levels:
             print(f"Invalid level. Choose from: {', '.join(valid_levels)}")
             return
-            
+
         self.progress['current_level'] = level
         self.save_progress()
         print(f"Level set to: {level}")
-    
+
+    def search_lessons(self, keywords: List[str], level_filter: Optional[str] = None):
+        """
+        Search for lessons matching keywords and display results.
+
+        Args:
+            keywords: List of search terms
+            level_filter: Optional level filter (beginner/intermediate/advanced/expert)
+        """
+        from lessons import search_lessons as search_fn
+
+        # Validate input
+        if not keywords:
+            print("Error: Please provide at least one keyword to search for.")
+            print("Usage: linuxtutor search <keyword> [<keyword2> ...]")
+            return
+
+        # Perform search
+        results = search_fn(keywords)
+
+        # Apply level filter if specified
+        if level_filter:
+            results = [r for r in results if r['lesson_data']['level'] == level_filter]
+
+        # Handle no results
+        if not results:
+            print(f"\nNo lessons found matching: {', '.join(keywords)}")
+            print("\nTry:")
+            print("  - Using fewer or different keywords")
+            if level_filter:
+                print(f"  - Searching without --level filter")
+            print("  - Running 'linuxtutor lessons' to browse all lessons")
+            return
+
+        # Display results
+        plural = 's' if len(results) != 1 else ''
+        print(f"\nFound {len(results)} lesson{plural} matching: {', '.join(keywords)}\n")
+
+        for i, result in enumerate(results, 1):
+            lesson = result['lesson_data']
+            lesson_id = result['lesson_id']
+
+            # Check completion status
+            status = "" if lesson_id in self.progress['completed_lessons'] else " "
+
+            # Header line
+            print(f"{i}. [{lesson['level'].title()}] {lesson['title']} (Score: {result['score']})")
+            print(f"   Duration: {lesson['duration']} minutes")
+            print(f"   Matched in: {', '.join(sorted(result['fields_matched']))}")
+
+            # Show snippets
+            snippets_shown = 0
+            max_snippets = 2  # Limit snippets per result
+
+            # Prioritize description snippet
+            if 'description' in result['snippets'] and snippets_shown < max_snippets:
+                print(f"\n   Description:")
+                print(f"   \"{result['snippets']['description']}\"")
+                snippets_shown += 1
+
+            # Show section title snippet
+            if 'section_title' in result['snippets'] and snippets_shown < max_snippets:
+                print(f"\n   Section:")
+                print(f"   \"{result['snippets']['section_title']}\"")
+                snippets_shown += 1
+
+            # Show text snippet if we haven't shown enough
+            if 'text' in result['snippets'] and snippets_shown < max_snippets:
+                print(f"\n   Content:")
+                print(f"   \"{result['snippets']['text']}\"")
+                snippets_shown += 1
+
+            # Show command description snippet
+            if 'command_desc' in result['snippets'] and snippets_shown < max_snippets:
+                print(f"\n   Command:")
+                print(f"   \"{result['snippets']['command_desc']}\"")
+                snippets_shown += 1
+
+            print()  # Blank line between results
+
+        # Helpful hint
+        print(f"To start a lesson, run: linuxtutor lesson <lesson-name>")
+
     def start_learning(self):
         """Smart start command that handles new and returning users"""
         is_first_time = self.progress.get('first_time', True)
@@ -281,6 +363,8 @@ Commands:
   lesson <name>            Start a lesson
   lesson <name> --continue Continue an interactive lesson
   level <level>            Set current learning level
+  search <keywords>...     Search lessons by keyword (AND logic)
+                          Use --level to filter by difficulty
   help                     Show this help message
 
 Levels: beginner, intermediate, advanced, expert
@@ -291,6 +375,8 @@ Examples:
   linuxtutor lessons beginner
   linuxtutor lesson intro-to-terminal
   linuxtutor level intermediate
+  linuxtutor search file security
+  linuxtutor search process --level intermediate
         """
         print(help_text.strip())
 
@@ -319,7 +405,14 @@ def main():
     
     # Help command
     subparsers.add_parser('help', help='Show detailed help')
-    
+
+    # Search command
+    search_parser = subparsers.add_parser('search', help='Search lessons by keyword')
+    search_parser.add_argument('keywords', nargs='+', help='Keywords to search for (AND logic)')
+    search_parser.add_argument('--level', '-l',
+                              choices=['beginner', 'intermediate', 'advanced', 'expert'],
+                              help='Filter results by level')
+
     args = parser.parse_args()
     
     tutor = LinuxTutor()
@@ -350,6 +443,8 @@ def main():
         tutor.set_level(args.level)
     elif args.command == 'help':
         tutor.show_help()
+    elif args.command == 'search':
+        tutor.search_lessons(args.keywords, args.level)
 
 if __name__ == '__main__':
     main()
