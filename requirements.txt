@@ -1,0 +1,7 @@
+# LinuxTutor Dependencies
+# Currently no external dependencies required for core functionality
+# Python standard library is sufficient
+
+# Development/Testing Dependencies (optional)
+# flake8>=6.0.0
+# pylint>=2.17.0

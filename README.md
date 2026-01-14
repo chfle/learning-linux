@@ -1,5 +1,7 @@
 # LinuxTutor
 
+![CI](https://github.com/YOUR_USERNAME/learning-linux/workflows/CI/badge.svg)
+
 A comprehensive interactive command-line learning platform for mastering Linux from beginner to expert level. This educational tool provides structured lessons, hands-on exercises, and progress tracking to help users develop essential Linux command line skills through practical experience.
 
 ## Features
@@ -86,11 +88,19 @@ LinuxTutor creates a personalized learning experience:
 
 ```
 learning-linux/
-├── linuxtutor.py      # Main CLI application
-├── lessons.py         # Lesson content and exercises
-├── test_search.py     # Comprehensive test suite for search feature
-├── setup.py          # Installation script
-└── README.md         # This file
+├── .github/
+│   └── workflows/
+│       └── ci.yml         # GitHub Actions CI pipeline
+├── tests/                 # Test suite directory
+│   ├── __init__.py        # Test package initialization
+│   └── test_search.py     # Search feature tests (47 tests)
+├── linuxtutor.py          # Main CLI application
+├── lessons.py             # Lesson content and exercises
+├── run_tests.py           # Automated test runner with discovery
+├── validate_syntax.py     # Python syntax validator
+├── setup.py               # Installation script
+├── requirements.txt       # Python dependencies
+└── README.md              # This file
 ```
 
 ## Advanced Usage
@@ -112,6 +122,94 @@ python3 linuxtutor.py help
 ### Uninstall
 ```bash
 python3 setup.py uninstall
+```
+
+## Development & Testing
+
+### Running Tests
+
+LinuxTutor includes a comprehensive automated test suite with intelligent test discovery:
+
+```bash
+# Run all tests (automatically discovers all test_*.py files)
+python3 run_tests.py
+
+# Run with verbose output
+python3 run_tests.py -v
+
+# Run with very verbose output
+python3 run_tests.py -vv
+
+# Run specific test pattern
+python3 run_tests.py --pattern "test_search.py"
+
+# Stop on first failure
+python3 run_tests.py --failfast
+
+# Quiet mode (minimal output)
+python3 run_tests.py -q
+```
+
+**Current test coverage: 47 tests**
+- Search functionality (snippet extraction, scoring, AND logic)
+- Relevance ranking and result sorting
+- Level filtering
+- Edge cases and error handling
+- Integration tests
+
+**Adding new tests**: Simply create a new file in `tests/` starting with `test_` and the test runner will automatically discover and run it!
+
+### Code Quality Validation
+
+Automatically validate Python syntax for all files in the project:
+
+```bash
+# Validate all Python files
+python3 validate_syntax.py
+
+# Verbose mode (shows all files being checked)
+python3 validate_syntax.py --verbose
+
+# Exclude specific directories
+python3 validate_syntax.py --exclude venv build dist
+```
+
+The validator automatically discovers all `.py` files and checks for syntax errors.
+
+### Continuous Integration
+
+This project uses GitHub Actions for automated testing. Every push and pull request automatically:
+
+**Multi-version Testing:**
+- Tests on Python 3.8, 3.9, 3.10, 3.11, and 3.12
+- Runs automated test discovery and execution
+- Validates CLI commands work correctly
+
+**Code Quality:**
+- Validates Python syntax for ALL files (auto-discovery)
+- Runs flake8 linting
+- Checks code complexity and standards
+
+**Integration Tests:**
+- Tests complete CLI workflow
+- Validates project structure
+- Ensures all tools are functional
+
+**Why this is scalable:** No hardcoded file lists! As you add more test files or Python modules, the CI pipeline automatically discovers and validates them.
+
+### Adding New Tests
+
+1. Create a new test file in `tests/` directory (must start with `test_`)
+2. Write your tests using `unittest`
+3. Run `python3 run_tests.py` - your tests are automatically discovered!
+
+Example:
+```bash
+# Create new test file
+touch tests/test_lessons.py
+
+# The test runner will automatically find and run it
+python3 run_tests.py
 ```
 
 ## Contributing

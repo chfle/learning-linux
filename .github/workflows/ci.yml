@@ -1,0 +1,112 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  test:
+    name: Test on Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Display Python version
+      run: python -c "import sys; print(sys.version)"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        # Add any additional dependencies here if needed
+        # pip install -r requirements.txt
+
+    - name: Run automated test suite
+      run: |
+        python run_tests.py -v
+
+    - name: Run CLI smoke tests
+      run: |
+        python linuxtutor.py help
+        python linuxtutor.py search file
+        python linuxtutor.py search process --level intermediate
+
+  lint:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install linting tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 pylint
+
+    - name: Run flake8 linting
+      run: |
+        # Stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Exit-zero treats all errors as warnings
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      continue-on-error: true
+
+    - name: Validate Python syntax (all files)
+      run: |
+        python validate_syntax.py --verbose
+
+  integration:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Validate project structure
+      run: |
+        test -f setup.py && echo "✓ setup.py exists"
+        test -f run_tests.py && echo "✓ run_tests.py exists"
+        test -f validate_syntax.py && echo "✓ validate_syntax.py exists"
+        test -d tests && echo "✓ tests/ directory exists"
+
+    - name: Validate all Python files
+      run: |
+        python validate_syntax.py
+
+    - name: Test CLI commands
+      run: |
+        python linuxtutor.py --help
+        python linuxtutor.py help
+        python linuxtutor.py search --help
+        python linuxtutor.py lessons
+        python linuxtutor.py search terminal
+
+    - name: Run comprehensive test suite
+      run: |
+        python run_tests.py -vv
