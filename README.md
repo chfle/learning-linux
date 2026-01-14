@@ -1,7 +1,5 @@
 # LinuxTutor
 
-![CI](https://github.com/YOUR_USERNAME/learning-linux/workflows/CI/badge.svg)
-
 A comprehensive interactive command-line learning platform for mastering Linux from beginner to expert level. This educational tool provides structured lessons, hands-on exercises, and progress tracking to help users develop essential Linux command line skills through practical experience.
 
 ## Features
