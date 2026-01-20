@@ -2,6 +2,7 @@
 
 import unittest
 import sys
+import builtins
 from io import StringIO
 from pathlib import Path
 
@@ -160,9 +161,9 @@ class TestDynamicLessonListing(unittest.TestCase):
         output = sys.stdout.getvalue()
         sys.stdout = old_stdout
 
-        # Count how many lessons are listed
+        # Count how many lessons are listed (looking for [ ] or [X] markers)
         lines = output.split('\n')
-        listed_count = sum(1 for line in lines if '○' in line or '✓' in line)
+        listed_count = sum(1 for line in lines if '[ ]' in line or '[X]' in line)
 
         self.assertEqual(listed_count, beginner_count,
                         f"Listed {listed_count} lessons but LESSONS dict has {beginner_count}")
@@ -381,6 +382,180 @@ class TestIntegration(unittest.TestCase):
                               "Should have at least 9 lessons after adding new ones")
 
 
+class TestStartCommand(unittest.TestCase):
+    """Test the improved start command functionality."""
+
+    def setUp(self):
+        """Set up test tutor instance."""
+        self.tutor = LinuxTutor()
+        # Start with clean progress
+        self.tutor.progress['completed_lessons'] = []
+        self.tutor.progress['current_lesson'] = None
+        self.tutor.progress['first_time'] = True
+
+    def test_get_next_lesson_returns_first_uncompleted(self):
+        """Test get_next_lesson returns first uncompleted lesson."""
+        # Mark some lessons as completed
+        self.tutor.progress['completed_lessons'] = ['basic-commands', 'file-system-basics']
+        self.tutor.progress['current_level'] = 'beginner'
+
+        next_lesson = self.tutor.get_next_lesson()
+
+        # Should return first uncompleted beginner lesson (alphabetically)
+        self.assertIsNotNone(next_lesson)
+        self.assertNotIn(next_lesson, self.tutor.progress['completed_lessons'])
+
+    def test_get_next_lesson_no_lessons_available(self):
+        """Test get_next_lesson when all lessons completed."""
+        from lessons import LESSONS
+
+        # Mark all beginner lessons as completed
+        beginner_lessons = [lid for lid, data in LESSONS.items() if data['level'] == 'beginner']
+        self.tutor.progress['completed_lessons'] = beginner_lessons
+        self.tutor.progress['current_level'] = 'beginner'
+
+        next_lesson = self.tutor.get_next_lesson()
+
+        # Should return None when all lessons completed
+        self.assertIsNone(next_lesson)
+
+    def test_get_next_lesson_different_levels(self):
+        """Test get_next_lesson respects current level."""
+        self.tutor.progress['completed_lessons'] = []
+
+        # Test beginner level
+        self.tutor.progress['current_level'] = 'beginner'
+        next_beginner = self.tutor.get_next_lesson()
+        from lessons import LESSONS
+        self.assertEqual(LESSONS[next_beginner]['level'], 'beginner')
+
+        # Test intermediate level
+        self.tutor.progress['current_level'] = 'intermediate'
+        next_intermediate = self.tutor.get_next_lesson()
+        if next_intermediate:  # Only if intermediate lessons exist
+            self.assertEqual(LESSONS[next_intermediate]['level'], 'intermediate')
+
+    def test_start_learning_first_time_user(self):
+        """Test start_learning with first-time user."""
+        self.tutor.progress['first_time'] = True
+
+        old_stdout = sys.stdout
+        old_input = builtins.input
+        sys.stdout = StringIO()
+
+        # Mock input to decline
+        builtins.input = lambda _: 'n'
+
+        self.tutor.start_learning()
+
+        output = sys.stdout.getvalue()
+
+        # Restore
+        sys.stdout = old_stdout
+        builtins.input = old_input
+
+        # Should show welcome message
+        self.assertIn('Welcome to LinuxTutor', output)
+        self.assertIn('first_time', self.tutor.progress)
+        self.assertFalse(self.tutor.progress['first_time'])
+
+    def test_start_learning_returning_user(self):
+        """Test start_learning with returning user."""
+        self.tutor.progress['first_time'] = False
+        self.tutor.progress['current_lesson'] = None
+        self.tutor.progress['completed_lessons'] = []
+
+        old_stdout = sys.stdout
+        old_input = builtins.input
+        sys.stdout = StringIO()
+
+        # Mock input to decline
+        builtins.input = lambda _: 'n'
+
+        self.tutor.start_learning()
+
+        output = sys.stdout.getvalue()
+
+        # Restore
+        sys.stdout = old_stdout
+        builtins.input = old_input
+
+        # Should show welcome back message
+        self.assertIn('Welcome back', output)
+
+    def test_show_continue_options_with_ongoing_lesson(self):
+        """Test show_continue_options when user has ongoing lesson."""
+        self.tutor.progress['current_lesson'] = 'intro-to-terminal'
+        self.tutor.progress['completed_lessons'] = []
+
+        old_stdout = sys.stdout
+        old_input = builtins.input
+        sys.stdout = StringIO()
+
+        # Mock input to decline
+        builtins.input = lambda _: 'n'
+
+        self.tutor.show_continue_options()
+
+        output = sys.stdout.getvalue()
+
+        # Restore
+        sys.stdout = old_stdout
+        builtins.input = old_input
+
+        # Should mention ongoing lesson
+        self.assertIn('ongoing lesson', output.lower())
+        self.assertIn('Intro To Terminal', output)
+
+    def test_show_continue_options_no_completed_lessons(self):
+        """Test show_continue_options when no lessons completed yet."""
+        self.tutor.progress['current_lesson'] = None
+        self.tutor.progress['completed_lessons'] = []
+
+        old_stdout = sys.stdout
+        old_input = builtins.input
+        sys.stdout = StringIO()
+
+        # Mock input to decline
+        builtins.input = lambda _: 'n'
+
+        self.tutor.show_continue_options()
+
+        output = sys.stdout.getvalue()
+
+        # Restore
+        sys.stdout = old_stdout
+        builtins.input = old_input
+
+        # Should mention no completed lessons
+        self.assertIn('haven\'t completed any lessons', output)
+
+    def test_show_continue_options_suggests_next_lesson(self):
+        """Test show_continue_options suggests next lesson."""
+        self.tutor.progress['current_lesson'] = None
+        self.tutor.progress['completed_lessons'] = ['intro-to-terminal']
+        self.tutor.progress['current_level'] = 'beginner'
+
+        old_stdout = sys.stdout
+        old_input = builtins.input
+        sys.stdout = StringIO()
+
+        # Mock input to decline
+        builtins.input = lambda _: 'n'
+
+        self.tutor.show_continue_options()
+
+        output = sys.stdout.getvalue()
+
+        # Restore
+        sys.stdout = old_stdout
+        builtins.input = old_input
+
+        # Should suggest next lesson
+        self.assertIn('Suggested next lesson', output)
+        self.assertIn('lessons completed', output)
+
+
 def run_tests():
     """Run all tests."""
     loader = unittest.TestLoader()
@@ -394,6 +569,7 @@ def run_tests():
     suite.addTests(loader.loadTestsFromTestCase(TestErrorMessages))
     suite.addTests(loader.loadTestsFromTestCase(TestNewLessonCommands))
     suite.addTests(loader.loadTestsFromTestCase(TestIntegration))
+    suite.addTests(loader.loadTestsFromTestCase(TestStartCommand))
 
     # Run tests
     runner = unittest.TextTestRunner(verbosity=2)

@@ -588,7 +588,7 @@ def run_lesson(lesson: Dict[str, Any], tutor) -> None:
                 print("-" * 40)
     
     print(f"\n{'='*50}")
-    print("Lesson completed! 🎉")
+    print("Lesson completed!")
     print(f"{'='*50}")
     
     # Mark lesson as completed

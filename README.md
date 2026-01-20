@@ -88,18 +88,19 @@ LinuxTutor creates a personalized learning experience:
 learning-linux/
 ├── .github/
 │   └── workflows/
-│       └── ci.yml         # GitHub Actions CI pipeline
-├── tests/                 # Test suite directory
-│   ├── __init__.py        # Test package initialization
-│   ├── test_search.py     # Search feature tests (47 tests)
-│   └── test_lessons.py    # Lesson structure and validation tests (26 tests)
-├── linuxtutor.py          # Main CLI application
-├── lessons.py             # Lesson content and exercises (9 lessons)
-├── run_tests.py           # Automated test runner with discovery
-├── validate_syntax.py     # Python syntax validator
-├── setup.py               # Installation script
-├── requirements.txt       # Python dependencies
-└── README.md              # This file
+│       └── ci.yml              # GitHub Actions CI pipeline
+├── tests/                      # Test suite directory (93 tests total)
+│   ├── __init__.py             # Test package initialization
+│   ├── test_search.py          # Search feature tests (47 tests)
+│   ├── test_lessons.py         # Lesson structure and validation tests (34 tests)
+│   └── test_interactive_flow.py # Interactive flow and UX tests (12 tests)
+├── linuxtutor.py               # Main CLI application with interactive loop
+├── lessons.py                  # Lesson content and exercises (9 lessons)
+├── run_tests.py                # Automated test runner with discovery
+├── validate_syntax.py          # Python syntax validator
+├── setup.py                    # Installation script
+├── requirements.txt            # Python dependencies
+└── README.md                   # This file
 ```
 
 ## Advanced Usage
@@ -149,7 +150,7 @@ python3 run_tests.py --failfast
 python3 run_tests.py -q
 ```
 
-**Current test coverage: 73 tests**
+**Current test coverage: 93 tests**
 - Search functionality (snippet extraction, scoring, AND logic)
 - Relevance ranking and result sorting
 - Level filtering
@@ -157,6 +158,9 @@ python3 run_tests.py -q
 - Prerequisite validation and enforcement
 - Error messages and user guidance
 - Dynamic lesson listing
+- Interactive lesson flow (no premature exits)
+- Post-lesson continuation and user choices
+- Full end-to-end user journeys
 - Edge cases and error handling
 - Integration tests
 
@@ -221,8 +225,10 @@ This is a learning project that can be extended with lots of cool features!
 
 **Current Status:**
 - ✅ Beginner track complete (5/5 lessons)
-- ✅ Dynamic lesson system with prerequisite validation
+- ✅ Dynamic lesson system with smart prerequisite validation
+- ✅ Prerequisite-aware lesson suggestions (never suggests impossible lessons)
 - ✅ Full-text search with relevance ranking
+- ✅ Interactive learning flow (no premature exits)
 - 🚧 9 of 20 lessons implemented
 
 Here's our wishlist:
