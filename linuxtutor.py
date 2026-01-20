@@ -453,9 +453,16 @@ def main():
                        help='Continue a lesson interactively')
     parser.add_argument('--level', '-l', dest='level_filter',
                        help='Filter by skill level')
+    parser.add_argument('--help', '-h', action='store_true',
+                       help='Show help message')
 
     args = parser.parse_args()
     tutor = LinuxTutor()
+
+    # Handle --help flag
+    if args.help:
+        tutor.show_help()
+        return
 
     # No command - show smart welcome
     if len(sys.argv) == 1:
