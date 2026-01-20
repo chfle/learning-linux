@@ -41,77 +41,125 @@ class LinuxTutor:
             print(f"Current Lesson: {self.progress['current_lesson']}")
     
     def list_lessons(self, level: Optional[str] = None):
-        lessons = {
-            'beginner': [
-                'intro-to-terminal',
-                'file-system-basics',
-                'basic-commands',
-                'file-permissions',
-                'text-editors'
-            ],
-            'intermediate': [
-                'process-management',
-                'text-processing',
-                'file-operations',
-                'networking-basics',
-                'package-management'
-            ],
-            'advanced': [
-                'shell-scripting',
-                'system-administration',
-                'log-analysis',
-                'security-basics',
-                'performance-monitoring'
-            ],
-            'expert': [
-                'kernel-concepts',
-                'advanced-networking',
-                'performance-tuning',
-                'security-hardening',
-                'automation-deployment'
-            ]
-        }
-        
+        from lessons import LESSONS
+
+        # Dynamically build lesson lists from actual lessons
+        lessons_by_level = {}
+        for lesson_id, lesson_data in LESSONS.items():
+            lvl = lesson_data['level']
+            if lvl not in lessons_by_level:
+                lessons_by_level[lvl] = []
+            lessons_by_level[lvl].append(lesson_id)
+
+        # Sort lessons alphabetically within each level
+        for lvl in lessons_by_level:
+            lessons_by_level[lvl].sort()
+
         target_level = level or self.progress['current_level']
-        if target_level not in lessons:
+        if target_level not in lessons_by_level:
             print(f"Invalid level: {target_level}")
+            print(f"Available levels: {', '.join(sorted(lessons_by_level.keys()))}")
             return
-            
+
         print(f"\n{target_level.title()} Level Lessons:")
-        for i, lesson in enumerate(lessons[target_level], 1):
+        for i, lesson in enumerate(lessons_by_level[target_level], 1):
             status = "✓" if lesson in self.progress['completed_lessons'] else "○"
             print(f"  {status} {i}. {lesson.replace('-', ' ').title()}")
-    
+
+    def check_prerequisites(self, lesson_data: dict, lesson_name: str) -> bool:
+        """
+        Check if user has completed all prerequisites for a lesson.
+
+        Returns True if ready, False if missing prerequisites.
+        Prints helpful message if prerequisites missing.
+        """
+        prereqs = lesson_data.get('prerequisites', [])
+        if not prereqs:
+            return True
+
+        missing = [p for p in prereqs if p not in self.progress['completed_lessons']]
+
+        if missing:
+            print(f"\n⚠️  Cannot start '{lesson_name}' yet.")
+            print(f"You need to complete these lessons first:")
+            for prereq in missing:
+                print(f"  - {prereq.replace('-', ' ').title()}")
+            print(f"\nStart with: linuxtutor lesson {missing[0]}")
+            return False
+
+        return True
+
+    def show_lesson_not_found_help(self, lesson_name: str):
+        """Show helpful error when lesson doesn't exist."""
+        from lessons import LESSONS, search_lessons
+
+        print(f"\n❌ Lesson '{lesson_name}' not found.\n")
+
+        # Try fuzzy search for similar lessons
+        similar = []
+        for lesson_id in LESSONS.keys():
+            if lesson_name.lower() in lesson_id.lower():
+                similar.append(lesson_id)
+
+        if similar:
+            print("Did you mean:")
+            for s in similar[:3]:
+                print(f"  - {s}")
+            print()
+
+        # Search by keywords
+        keywords = lesson_name.split('-')
+        results = search_lessons(keywords)
+        if results:
+            print("Lessons matching your search:")
+            for i, result in enumerate(results[:3], 1):
+                lesson = result['lesson_data']
+                print(f"  {i}. {lesson['title']} ({lesson['level']})")
+            print()
+
+        print("Try:")
+        print(f"  linuxtutor lessons           # Browse all available lessons")
+        print(f"  linuxtutor search {lesson_name}   # Search for related lessons")
+        print(f"  linuxtutor lessons beginner  # Start with beginner lessons")
+
     def start_lesson(self, lesson_name: str):
         from lessons import get_lesson
-        
+
         lesson = get_lesson(lesson_name)
         if not lesson:
-            print(f"Lesson '{lesson_name}' not found.")
+            self.show_lesson_not_found_help(lesson_name)
             return
-            
+
+        # Check prerequisites
+        if not self.check_prerequisites(lesson, lesson_name):
+            return
+
         self.progress['current_lesson'] = lesson_name
         self.save_progress()
-        
+
         print(f"\n=== {lesson['title']} ===")
         print(f"Level: {lesson['level'].title()}")
         print(f"Duration: ~{lesson['duration']} minutes\n")
         print(lesson['description'])
-        
+
         if lesson.get('prerequisites'):
             print(f"\nPrerequisites: {', '.join(lesson['prerequisites'])}")
-        
+
         print(f"\nTo continue with this lesson, run:")
         print(f"  linuxtutor lesson {lesson_name} --continue")
     
     def continue_lesson(self, lesson_name: str):
         from lessons import get_lesson, run_lesson
-        
+
         lesson = get_lesson(lesson_name)
         if not lesson:
-            print(f"Lesson '{lesson_name}' not found.")
+            self.show_lesson_not_found_help(lesson_name)
             return
-            
+
+        # Check prerequisites
+        if not self.check_prerequisites(lesson, lesson_name):
+            return
+
         run_lesson(lesson, self)
     
     def complete_lesson(self, lesson_name: str):

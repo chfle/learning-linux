@@ -91,9 +91,10 @@ learning-linux/
 │       └── ci.yml         # GitHub Actions CI pipeline
 ├── tests/                 # Test suite directory
 │   ├── __init__.py        # Test package initialization
-│   └── test_search.py     # Search feature tests (47 tests)
+│   ├── test_search.py     # Search feature tests (47 tests)
+│   └── test_lessons.py    # Lesson structure and validation tests (26 tests)
 ├── linuxtutor.py          # Main CLI application
-├── lessons.py             # Lesson content and exercises
+├── lessons.py             # Lesson content and exercises (9 lessons)
 ├── run_tests.py           # Automated test runner with discovery
 ├── validate_syntax.py     # Python syntax validator
 ├── setup.py               # Installation script
@@ -148,10 +149,14 @@ python3 run_tests.py --failfast
 python3 run_tests.py -q
 ```
 
-**Current test coverage: 47 tests**
+**Current test coverage: 73 tests**
 - Search functionality (snippet extraction, scoring, AND logic)
 - Relevance ranking and result sorting
 - Level filtering
+- Lesson structure validation and content
+- Prerequisite validation and enforcement
+- Error messages and user guidance
+- Dynamic lesson listing
 - Edge cases and error handling
 - Integration tests
 
@@ -212,7 +217,15 @@ python3 run_tests.py
 
 ## Contributing
 
-This is a learning project that can be extended with lots of cool features! Here's our wishlist:
+This is a learning project that can be extended with lots of cool features!
+
+**Current Status:**
+- ✅ Beginner track complete (5/5 lessons)
+- ✅ Dynamic lesson system with prerequisite validation
+- ✅ Full-text search with relevance ranking
+- 🚧 9 of 20 lessons implemented
+
+Here's our wishlist:
 
 ### High Priority
 - [ ] quiz system - add some questions after lessons so ppl actually learn stuff

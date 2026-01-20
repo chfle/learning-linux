@@ -234,6 +234,191 @@ repetitive tasks. Key concepts:
                 ]
             }
         ]
+    },
+
+    'file-permissions': {
+        'title': 'Understanding File Permissions',
+        'level': 'beginner',
+        'duration': 20,
+        'description': 'Master Linux file permissions, ownership, and access control.',
+        'prerequisites': ['basic-commands'],
+        'content': [
+            {
+                'type': 'explanation',
+                'title': 'Unix Permission Model',
+                'text': '''Linux uses a permission system with three types of users:
+- Owner (u): The file creator
+- Group (g): Users in the file's group
+- Others (o): Everyone else
+
+Three permission types:
+- Read (r/4): View file contents or list directory
+- Write (w/2): Modify file or directory contents
+- Execute (x/1): Run file as program or enter directory
+
+Example: rwxr-xr-- means:
+- Owner: read, write, execute (7)
+- Group: read, execute (5)
+- Others: read only (4)'''
+            },
+            {
+                'type': 'exercise',
+                'title': 'Viewing and Understanding Permissions',
+                'instructions': 'Learn to read file permissions:',
+                'commands': [
+                    {'cmd': 'ls -l', 'description': 'List files with permissions'},
+                    {'cmd': 'ls -la', 'description': 'Include hidden files'},
+                    {'cmd': 'stat .bashrc', 'description': 'Detailed file information'},
+                    {'cmd': 'ls -ld /tmp', 'description': 'Check directory permissions'}
+                ]
+            },
+            {
+                'type': 'explanation',
+                'title': 'Changing Permissions',
+                'text': '''Use chmod to modify permissions:
+
+Symbolic method:
+- chmod u+x file   # Add execute for owner
+- chmod g-w file   # Remove write for group
+- chmod o=r file   # Set others to read-only
+- chmod a+r file   # Add read for all (a=all)
+
+Numeric method (octal):
+- chmod 755 file   # rwxr-xr-x
+- chmod 644 file   # rw-r--r--
+- chmod 600 file   # rw------- (private)'''
+            },
+            {
+                'type': 'exercise',
+                'title': 'Modifying Permissions',
+                'instructions': 'Practice changing file permissions:',
+                'commands': [
+                    {'cmd': 'touch testfile.txt', 'description': 'Create test file'},
+                    {'cmd': 'chmod 644 testfile.txt', 'description': 'Set to rw-r--r--'},
+                    {'cmd': 'chmod u+x testfile.txt', 'description': 'Add execute for owner'},
+                    {'cmd': 'chmod go-r testfile.txt', 'description': 'Remove read from group/others'},
+                    {'cmd': 'ls -l testfile.txt', 'description': 'Verify new permissions'}
+                ]
+            },
+            {
+                'type': 'explanation',
+                'title': 'File Ownership',
+                'text': '''Every file has an owner and group:
+
+Change ownership (requires sudo):
+- chown user file        # Change owner
+- chown user:group file  # Change owner and group
+- chgrp group file       # Change group only
+
+Check ownership:
+- ls -l shows owner and group
+- Use 'id' to see your user and groups'''
+            },
+            {
+                'type': 'exercise',
+                'title': 'Working with Ownership',
+                'instructions': 'Understand file ownership:',
+                'commands': [
+                    {'cmd': 'id', 'description': 'Show your user ID and groups'},
+                    {'cmd': 'ls -l testfile.txt', 'description': 'See file owner and group'},
+                    {'cmd': 'groups', 'description': 'List your groups'},
+                    {'cmd': 'stat testfile.txt', 'description': 'Detailed ownership info'}
+                ]
+            }
+        ]
+    },
+
+    'text-editors': {
+        'title': 'Working with Text Editors',
+        'level': 'beginner',
+        'duration': 25,
+        'description': 'Learn essential text editors: nano, vim basics, and when to use each.',
+        'prerequisites': ['basic-commands'],
+        'content': [
+            {
+                'type': 'explanation',
+                'title': 'Why Text Editors Matter',
+                'text': '''In Linux, you'll frequently edit configuration files, scripts, and code.
+Common text editors:
+- nano: Beginner-friendly, simple interface
+- vim/vi: Powerful, modal editor (learning curve)
+- emacs: Extensible, feature-rich (advanced)
+- gedit/kate: GUI editors (if available)
+
+We'll focus on nano (easy) and vim basics (essential).'''
+            },
+            {
+                'type': 'exercise',
+                'title': 'Nano - The Friendly Editor',
+                'instructions': 'Learn nano basics:',
+                'commands': [
+                    {'cmd': 'nano', 'description': 'Open nano editor (Ctrl+X to exit)'},
+                    {'cmd': 'nano filename.txt', 'description': 'Create/edit a file'},
+                    {'cmd': 'nano -l filename.txt', 'description': 'Open with line numbers'},
+                    {'cmd': 'cat filename.txt', 'description': 'View what you created'}
+                ]
+            },
+            {
+                'type': 'explanation',
+                'title': 'Nano Shortcuts',
+                'text': '''Essential nano commands (^ means Ctrl):
+- ^X: Exit (prompts to save)
+- ^O: Save file (write Out)
+- ^W: Search (Where is)
+- ^K: Cut line
+- ^U: Paste (uncut)
+- ^G: Get help (shows all shortcuts)
+
+Bottom of screen shows available commands.'''
+            },
+            {
+                'type': 'explanation',
+                'title': 'Vim Basics - Survival Guide',
+                'text': '''Vim is everywhere in Linux. Learn these basics:
+
+Vim has modes:
+- Normal mode: Navigate and command (default)
+- Insert mode: Type text (press 'i' to enter)
+- Command mode: Execute commands (press ':')
+
+Absolute minimum to survive:
+- i: Enter insert mode (type text)
+- Esc: Return to normal mode
+- :w: Write (save) file
+- :q: Quit vim
+- :wq: Save and quit
+- :q!: Quit without saving (force)'''
+            },
+            {
+                'type': 'exercise',
+                'title': 'Vim Practice (Safe)',
+                'instructions': 'Try vim commands (we\'ll guide you):',
+                'commands': [
+                    {'cmd': 'vimtutor', 'description': 'Interactive vim tutorial (recommended!)'},
+                    {'cmd': 'vim', 'description': 'Open vim (type :q! to exit)'},
+                    {'cmd': 'vim testfile.txt', 'description': 'Edit file in vim'}
+                ]
+            },
+            {
+                'type': 'explanation',
+                'title': 'Which Editor When?',
+                'text': '''Choose your editor:
+
+Use nano when:
+- Quick edits
+- You're new to Linux
+- Simple configuration changes
+- The instructions say so
+
+Use vim when:
+- Already on a system without nano
+- Want powerful features
+- Editing code/scripts
+- Faster navigation (with practice)
+
+Pro tip: Start with nano, learn vim gradually. Many sysadmins know both!'''
+            }
+        ]
     }
 }
 
