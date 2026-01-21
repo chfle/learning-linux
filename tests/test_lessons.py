@@ -25,6 +25,10 @@ class TestLessonStructure(unittest.TestCase):
                 for field in required_fields:
                     self.assertIn(field, lesson_data, f"Lesson {lesson_id} missing field: {field}")
 
+                # Quiz is optional
+                if 'quiz' in lesson_data:
+                    self.assertIsInstance(lesson_data['quiz'], list)
+
     def test_lesson_levels_valid(self):
         """Test that all lessons have valid level values."""
         valid_levels = ['beginner', 'intermediate', 'advanced', 'expert']

@@ -33,3 +33,8 @@ DEFAULT_FIRST_TIME = True
 
 # Positive responses for yes/no prompts
 AFFIRMATIVE_RESPONSES = ['', 'y', 'yes']
+
+# Quiz display symbols
+QUIZ_CHECKMARK = '✓'
+QUIZ_CROSSMARK = '✗'
+QUIZ_SEPARATOR = '─' * 40

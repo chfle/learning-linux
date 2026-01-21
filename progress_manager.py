@@ -33,7 +33,17 @@ class ProgressManager:
         """
         if self.progress_file.exists():
             with open(self.progress_file, 'r') as f:
-                return json.load(f)
+                progress = json.load(f)
+
+            # Backward compatibility: Add missing fields
+            if 'stats' in progress:
+                # Add quiz stats if missing (for old progress files)
+                if 'quizzes_completed' not in progress['stats']:
+                    progress['stats']['quizzes_completed'] = 0
+                if 'quiz_total_attempts' not in progress['stats']:
+                    progress['stats']['quiz_total_attempts'] = 0
+
+            return progress
 
         return self._create_default_progress()
 
@@ -63,7 +73,9 @@ class ProgressManager:
             'completed_lessons': [],
             'stats': {
                 'lessons_completed': 0,
-                'exercises_completed': 0
+                'exercises_completed': 0,
+                'quizzes_completed': 0,
+                'quiz_total_attempts': 0
             }
         }
 
@@ -138,4 +150,19 @@ class ProgressManager:
             Updated progress dictionary
         """
         progress['first_time'] = False
+        return progress
+
+    def increment_quiz_stats(self, progress: Dict[str, Any], attempts: int) -> Dict[str, Any]:
+        """
+        Increment quiz completion statistics.
+
+        Args:
+            progress: Current progress dictionary
+            attempts: Number of attempts in the quiz
+
+        Returns:
+            Updated progress dictionary
+        """
+        progress['stats']['quizzes_completed'] += 1
+        progress['stats']['quiz_total_attempts'] += attempts
         return progress

@@ -179,3 +179,19 @@ myscript.sh
 # User progress files (these should not be committed)
 progress.json
 .linuxtutor/
+
+# Planning and development documents
+docs/plans/
+.claude/
+
+# AI tools and references
+*claude*
+*gpt*
+*deepseek*
+*alice*
+*grok*
+*chatgpt*
+*anthropic*
+*openai*
+*ai-*
+*-ai*

@@ -2,6 +2,8 @@ import os
 import sys
 import subprocess
 from typing import Dict, List, Optional, Any
+from quiz_system import Quiz, QuizRunner
+from ui_prompts import prompt_yes_no
 
 LESSONS = {
     'intro-to-terminal': {
@@ -14,9 +16,9 @@ LESSONS = {
             {
                 'type': 'explanation',
                 'title': 'What is the Terminal?',
-                'text': '''The terminal (also called command line or shell) is a text-based interface 
-for interacting with your Linux system. Unlike graphical interfaces, you type commands 
-to perform tasks. This might seem intimidating at first, but it's incredibly powerful 
+                'text': '''The terminal (also called command line or shell) is a text-based interface
+for interacting with your Linux system. Unlike graphical interfaces, you type commands
+to perform tasks. This might seem intimidating at first, but it's incredibly powerful
 and efficient once you learn the basics.'''
             },
             {
@@ -29,6 +31,92 @@ and efficient once you learn the basics.'''
                     {'cmd': 'date', 'description': 'Shows the current date and time'},
                     {'cmd': 'uname -a', 'description': 'Shows system information'}
                 ]
+            }
+        ],
+        'quiz': [
+            {
+                'type': 'multiple_choice',
+                'question': 'What does the terminal allow you to do?',
+                'options': [
+                    'Interact with Linux using text commands',
+                    'Only view files',
+                    'Browse the internet',
+                    'Create graphics'
+                ],
+                'correct': 0,
+                'explanation': 'The terminal is a text-based interface for interacting with your Linux system using commands.'
+            },
+            {
+                'type': 'command_recall',
+                'question': 'Which command displays your current username?',
+                'answer': 'whoami',
+                'explanation': 'The whoami command shows your current username.'
+            },
+            {
+                'type': 'command_recall',
+                'question': 'Which command shows your current directory location?',
+                'answer': 'pwd',
+                'explanation': 'pwd stands for Print Working Directory and shows your current location in the file system.'
+            },
+            {
+                'type': 'true_false',
+                'question': 'The terminal can only be used by experts.',
+                'answer': False,
+                'explanation': 'False. While it may seem intimidating at first, anyone can learn to use the terminal with practice.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'What does pwd stand for?',
+                'options': [
+                    'Print Working Directory',
+                    'Power Working Drive',
+                    'Present Working Data',
+                    'Process Window Display'
+                ],
+                'correct': 0,
+                'explanation': 'pwd stands for Print Working Directory.'
+            },
+            {
+                'type': 'command_recall',
+                'question': 'Which command shows the current date and time?',
+                'answer': 'date',
+                'explanation': 'The date command displays the current date and time.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'What is another name for the terminal?',
+                'options': [
+                    'Command line or shell',
+                    'Desktop',
+                    'File manager',
+                    'Web browser'
+                ],
+                'correct': 0,
+                'explanation': 'The terminal is also called the command line or shell.'
+            },
+            {
+                'type': 'true_false',
+                'question': 'The uname command shows system information.',
+                'answer': True,
+                'explanation': 'True. The uname command (especially with -a flag) displays system information.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'Why is the terminal powerful once you learn it?',
+                'options': [
+                    'It allows efficient task automation and system control',
+                    'It has colorful graphics',
+                    'It is easier than using a mouse',
+                    'It requires no learning'
+                ],
+                'correct': 0,
+                'explanation': 'The terminal is powerful because it enables efficient automation and precise system control.'
+            },
+            {
+                'type': 'true_false',
+                'question': 'Commands in the terminal are typed as text.',
+                'answer': True,
+                'explanation': 'True. The terminal is a text-based interface where you type commands.'
             }
         ]
     },
@@ -426,33 +514,41 @@ def get_lesson(lesson_name: str) -> Optional[Dict[str, Any]]:
     return LESSONS.get(lesson_name)
 
 def run_lesson(lesson: Dict[str, Any], tutor) -> None:
+    """Run a lesson interactively with quiz at the end."""
+    # Get lesson ID by finding it in LESSONS dict
+    lesson_id = None
+    for lid, ldata in LESSONS.items():
+        if ldata is lesson:
+            lesson_id = lid
+            break
+
     print(f"\n{'='*50}")
     print(f"Starting: {lesson['title']}")
     print(f"{'='*50}\n")
-    
+
     # Track simulated file system state for this lesson
     simulated_fs = {
         'directories': set(),
         'files': {},  # filename -> content
     }
-    
+
     for i, section in enumerate(lesson['content'], 1):
         print(f"\n--- Section {i}: {section['title']} ---\n")
-        
+
         if section['type'] == 'explanation':
             print(section['text'])
             input("\nPress Enter to continue...")
-            
+
         elif section['type'] == 'exercise':
             print(section['text'] if 'text' in section else section['instructions'])
             print()
-            
+
             for cmd_info in section['commands']:
                 print(f"Command: {cmd_info['cmd']}")
                 print(f"Purpose: {cmd_info['description']}")
-                
+
                 choice = input("\n[r]un, [s]kip, or [q]uit? ").lower().strip()
-                
+
                 if choice == 'q':
                     print("Lesson interrupted.")
                     return
@@ -462,21 +558,21 @@ def run_lesson(lesson: Dict[str, Any], tutor) -> None:
                 elif choice == 'r' or choice == '':
                     try:
                         print(f"\n$ {cmd_info['cmd']}")
-                        
+
                         # Parse command
                         cmd_parts = cmd_info['cmd'].split()
                         cmd = cmd_parts[0]
-                        
+
                         # Handle different commands
                         if cmd in ['whoami', 'pwd', 'date', 'uname']:
                             # These are safe to run directly
-                            result = subprocess.run(cmd_info['cmd'], shell=True, 
+                            result = subprocess.run(cmd_info['cmd'], shell=True,
                                                  capture_output=True, text=True)
                             if result.returncode == 0:
                                 print(result.stdout)
                             else:
                                 print(f"Error: {result.stderr}")
-                                
+
                         elif cmd == 'mkdir':
                             # Simulate directory creation
                             if len(cmd_parts) > 1:
@@ -485,7 +581,7 @@ def run_lesson(lesson: Dict[str, Any], tutor) -> None:
                                 print(f"[SIMULATION] Created directory: {dirname}")
                             else:
                                 print("[SIMULATION] This command would create a directory")
-                                
+
                         elif cmd == 'touch':
                             # Simulate file creation
                             if len(cmd_parts) > 1:
@@ -494,7 +590,7 @@ def run_lesson(lesson: Dict[str, Any], tutor) -> None:
                                 print(f"[SIMULATION] Created empty file: {filename}")
                             else:
                                 print("[SIMULATION] This command would create an empty file")
-                                
+
                         elif cmd == 'echo' and '>' in cmd_info['cmd']:
                             # Simulate file writing
                             parts = cmd_info['cmd'].split('>')
@@ -505,7 +601,7 @@ def run_lesson(lesson: Dict[str, Any], tutor) -> None:
                                 print(f"[SIMULATION] Wrote '{content}' to {filename}")
                             else:
                                 print("[SIMULATION] This command would write to a file")
-                                
+
                         elif cmd == 'cat':
                             # Simulate file reading
                             if len(cmd_parts) > 1:
@@ -517,7 +613,7 @@ def run_lesson(lesson: Dict[str, Any], tutor) -> None:
                                     print(f"[SIMULATION] File {filename} not found (would show error)")
                             else:
                                 print("[SIMULATION] This command would display file contents")
-                                
+
                         elif cmd == 'cp':
                             # Simulate file copying
                             if len(cmd_parts) >= 3:
@@ -530,7 +626,7 @@ def run_lesson(lesson: Dict[str, Any], tutor) -> None:
                                     print(f"[SIMULATION] Would copy {src} to {dst}")
                             else:
                                 print("[SIMULATION] This command would copy a file")
-                                
+
                         elif cmd == 'mv':
                             # Simulate file moving
                             if len(cmd_parts) >= 3:
@@ -553,14 +649,14 @@ def run_lesson(lesson: Dict[str, Any], tutor) -> None:
                                     print(f"[SIMULATION] Would move/rename {src} to {dst}")
                             else:
                                 print("[SIMULATION] This command would move/rename a file")
-                                
+
                         elif cmd == 'ls':
                             # Simulate directory listing
                             if len(cmd_parts) > 1:
                                 target = cmd_parts[1].rstrip('/')
                                 if target in simulated_fs['directories']:
                                     # List files in the directory
-                                    files_in_dir = [f.split('/')[-1] for f in simulated_fs['files'].keys() 
+                                    files_in_dir = [f.split('/')[-1] for f in simulated_fs['files'].keys()
                                                   if f.startswith(f"{target}/")]
                                     if files_in_dir:
                                         print('\n'.join(files_in_dir))
@@ -577,31 +673,57 @@ def run_lesson(lesson: Dict[str, Any], tutor) -> None:
                                     print('\n'.join(all_items))
                                 else:
                                     print("[SIMULATION] Current directory appears empty")
-                                    
+
                         else:
                             print(f"[SIMULATION] This command would execute: {cmd_info['cmd']}")
                             print("(In a real environment, you would run this command)")
-                        
+
                     except Exception as e:
                         print(f"Error running command: {e}")
-                
+
                 print("-" * 40)
-    
-    print(f"\n{'='*50}")
-    print("Lesson completed!")
-    print(f"{'='*50}")
-    
-    # Mark lesson as completed
-    lesson_name = None
-    for name, data in LESSONS.items():
-        if data == lesson:
-            lesson_name = name
-            break
-    
-    if lesson_name:
-        tutor.complete_lesson(lesson_name)
-        tutor.progress['stats']['exercises_completed'] += len([s for s in lesson['content'] if s['type'] == 'exercise'])
-        tutor.save_progress()
+
+    # After all sections complete, run quiz if available
+    quiz_data = lesson.get('quiz')
+    if quiz_data:
+        print("\n" + "="*50)
+        print("Lesson Complete!")
+        print("="*50)
+
+        # Ask if ready for quiz
+        if not prompt_yes_no("\nReady to start the quiz? [Y/n]: "):
+            print("\nYou can come back to complete the quiz later.")
+            print("The lesson won't be marked complete until you pass the quiz.")
+            return
+
+        # Run quiz
+        quiz = Quiz(quiz_data)
+        runner = QuizRunner(quiz)
+        attempts, completed = runner.run()
+
+        # Update progress with quiz stats only if completed
+        if completed:
+            tutor.progress = tutor.progress_mgr.increment_quiz_stats(tutor.progress, attempts)
+            tutor.save_progress()
+
+            # Mark lesson complete only if quiz was completed
+            if lesson_id:
+                tutor.complete_lesson(lesson_id)
+                tutor.progress['stats']['exercises_completed'] += len([s for s in lesson['content'] if s['type'] == 'exercise'])
+                tutor.save_progress()
+        else:
+            print("\nQuiz not completed. You can retry this lesson later to complete the quiz.")
+            return
+    else:
+        # No quiz for this lesson - mark as complete
+        print("\n" + "="*50)
+        print("Lesson Complete!")
+        print("="*50)
+
+        if lesson_id:
+            tutor.complete_lesson(lesson_id)
+            tutor.progress['stats']['exercises_completed'] += len([s for s in lesson['content'] if s['type'] == 'exercise'])
+            tutor.save_progress()
 
 def list_all_lessons() -> Dict[str, List[str]]:
     levels = {}
