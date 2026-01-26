@@ -153,6 +153,99 @@ Key directories include:
                     {'cmd': 'cd -', 'description': 'Go back to the previous directory'}
                 ]
             }
+        ],
+        'quiz': [
+            {
+                'type': 'multiple_choice',
+                'question': 'What is the root directory in Linux?',
+                'options': [
+                    '/',
+                    '/root',
+                    '/home',
+                    'C:\\'
+                ],
+                'correct': 0,
+                'explanation': 'The root directory is represented by a single forward slash (/).'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'Which directory contains user home directories?',
+                'options': [
+                    '/home',
+                    '/users',
+                    '/usr',
+                    '/var'
+                ],
+                'correct': 0,
+                'explanation': '/home contains home directories for all regular users.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'Where are system configuration files typically stored?',
+                'options': [
+                    '/etc',
+                    '/config',
+                    '/sys',
+                    '/settings'
+                ],
+                'correct': 0,
+                'explanation': '/etc contains system-wide configuration files.'
+            },
+            {
+                'type': 'command_recall',
+                'question': 'Which command is used to change directories?',
+                'answer': 'cd',
+                'explanation': 'cd (change directory) is used to navigate between directories.'
+            },
+            {
+                'type': 'command_recall',
+                'question': 'What command lists files and directories?',
+                'answer': 'ls',
+                'alternatives': ['ls -l', 'ls -la'],
+                'explanation': 'ls lists directory contents. Common variants include ls -l and ls -la.'
+            },
+            {
+                'type': 'fill_blank',
+                'question': 'The ~ symbol represents your _____ directory.',
+                'answer': 'home',
+                'explanation': 'The tilde (~) is a shortcut for your home directory.'
+            },
+            {
+                'type': 'true_false',
+                'question': '/tmp stores temporary files that may be deleted on reboot.',
+                'answer': True,
+                'explanation': 'True. /tmp is designed for temporary files and is often cleared on reboot.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'What does "cd .." do?',
+                'options': [
+                    'Moves up one directory level',
+                    'Moves down one directory level',
+                    'Goes to the root directory',
+                    'Lists the current directory'
+                ],
+                'correct': 0,
+                'explanation': '"cd .." moves up to the parent directory.'
+            },
+            {
+                'type': 'true_false',
+                'question': '/bin contains essential system commands and binaries.',
+                'answer': True,
+                'explanation': 'True. /bin stores essential binary executables needed for system operation.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'Which directory contains variable data like logs?',
+                'options': [
+                    '/var',
+                    '/log',
+                    '/data',
+                    '/tmp'
+                ],
+                'correct': 0,
+                'explanation': '/var (variable) stores data that changes frequently, including logs.'
+            }
         ]
     },
     
@@ -186,6 +279,87 @@ Key directories include:
                     {'cmd': 'mv test_copy.txt test_dir/', 'description': 'Move file to directory'},
                     {'cmd': 'ls test_dir/', 'description': 'List contents of directory'}
                 ]
+            }
+        ],
+        'quiz': [
+            {
+                'type': 'command_recall',
+                'question': 'Which command creates a new directory?',
+                'answer': 'mkdir',
+                'explanation': 'mkdir (make directory) creates new directories.'
+            },
+            {
+                'type': 'command_recall',
+                'question': 'Which command creates an empty file?',
+                'answer': 'touch',
+                'explanation': 'touch creates empty files or updates file timestamps.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'What does the cp command do?',
+                'options': [
+                    'Copies files or directories',
+                    'Changes permissions',
+                    'Creates a process',
+                    'Compares files'
+                ],
+                'correct': 0,
+                'explanation': 'cp (copy) duplicates files or directories.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'What is the difference between mv and cp?',
+                'options': [
+                    'mv moves/renames, cp copies',
+                    'mv copies, cp moves',
+                    'They are the same',
+                    'mv is faster than cp'
+                ],
+                'correct': 0,
+                'explanation': 'mv moves or renames files, while cp creates a copy.'
+            },
+            {
+                'type': 'command_recall',
+                'question': 'Which command displays the contents of a text file?',
+                'answer': 'cat',
+                'alternatives': ['less', 'more', 'head', 'tail'],
+                'explanation': 'cat displays file contents. less, more, head, and tail are also valid viewers.'
+            },
+            {
+                'type': 'true_false',
+                'question': 'The rm command can be dangerous because it permanently deletes files.',
+                'answer': True,
+                'explanation': 'True. rm removes files permanently without moving them to a trash/recycle bin.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'How do you remove an empty directory?',
+                'options': [
+                    'rmdir directory_name',
+                    'rm directory_name',
+                    'delete directory_name',
+                    'remove directory_name'
+                ],
+                'correct': 0,
+                'explanation': 'rmdir removes empty directories. Use rm -r for non-empty directories.'
+            },
+            {
+                'type': 'fill_blank',
+                'question': 'The _____ command can view the first few lines of a file.',
+                'answer': 'head',
+                'explanation': 'head displays the first lines of a file (default 10 lines).'
+            },
+            {
+                'type': 'fill_blank',
+                'question': 'The _____ command can view the last few lines of a file.',
+                'answer': 'tail',
+                'explanation': 'tail displays the last lines of a file (default 10 lines).'
+            },
+            {
+                'type': 'true_false',
+                'question': 'The mv command can be used to rename files.',
+                'answer': True,
+                'explanation': 'True. mv can both move files to new locations and rename them.'
             }
         ]
     },
@@ -413,6 +587,98 @@ Check ownership:
                     {'cmd': 'stat testfile.txt', 'description': 'Detailed ownership info'}
                 ]
             }
+        ],
+        'quiz': [
+            {
+                'type': 'multiple_choice',
+                'question': 'How many permission categories exist in Linux?',
+                'options': [
+                    'Three: owner, group, others',
+                    'Two: user and admin',
+                    'Four: read, write, execute, delete',
+                    'One: user permissions'
+                ],
+                'correct': 0,
+                'explanation': 'Linux has three permission categories: owner (u), group (g), and others (o).'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'What are the three basic permission types?',
+                'options': [
+                    'Read, write, execute',
+                    'Create, modify, delete',
+                    'View, edit, run',
+                    'Open, save, close'
+                ],
+                'correct': 0,
+                'explanation': 'The three permission types are read (r), write (w), and execute (x).'
+            },
+            {
+                'type': 'fill_blank',
+                'question': 'The _____ command changes file permissions.',
+                'answer': 'chmod',
+                'explanation': 'chmod (change mode) modifies file permissions.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'What does "chmod 755 file" mean?',
+                'options': [
+                    'Owner: rwx, Group: r-x, Others: r-x',
+                    'Owner: r-x, Group: rwx, Others: r-x',
+                    'Owner: rwx, Group: rwx, Others: rwx',
+                    'Owner: r--, Group: r--, Others: r--'
+                ],
+                'correct': 0,
+                'explanation': '755 = rwxr-xr-x (7=rwx for owner, 5=r-x for group and others).'
+            },
+            {
+                'type': 'command_recall',
+                'question': 'Which command changes file ownership?',
+                'answer': 'chown',
+                'explanation': 'chown (change owner) modifies file ownership.'
+            },
+            {
+                'type': 'true_false',
+                'question': 'The read permission (r) has a numeric value of 4.',
+                'answer': True,
+                'explanation': 'True. Permission values are: read=4, write=2, execute=1.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'What does "chmod u+x file" do?',
+                'options': [
+                    'Adds execute permission for the owner',
+                    'Removes execute permission for the owner',
+                    'Adds execute permission for everyone',
+                    'Changes the user ownership'
+                ],
+                'correct': 0,
+                'explanation': 'u+x adds (+) execute (x) permission for the user/owner (u).'
+            },
+            {
+                'type': 'fill_blank',
+                'question': 'In permissions, "w" stands for _____.',
+                'answer': 'write',
+                'explanation': 'The "w" permission allows write/modify access to files or directories.'
+            },
+            {
+                'type': 'true_false',
+                'question': 'The execute permission on a directory allows you to enter it.',
+                'answer': True,
+                'explanation': 'True. Execute (x) permission on directories allows you to cd into them.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'What does "chmod 600 file" do?',
+                'options': [
+                    'Makes the file private to owner (rw-------)',
+                    'Gives everyone read access',
+                    'Makes the file read-only',
+                    'Removes all permissions'
+                ],
+                'correct': 0,
+                'explanation': '600 = rw------- (owner can read/write, no permissions for group/others).'
+            }
         ]
     },
 
@@ -505,6 +771,96 @@ Use vim when:
 - Faster navigation (with practice)
 
 Pro tip: Start with nano, learn vim gradually. Many sysadmins know both!'''
+            }
+        ],
+        'quiz': [
+            {
+                'type': 'multiple_choice',
+                'question': 'Which text editor is most beginner-friendly?',
+                'options': [
+                    'nano',
+                    'vim',
+                    'emacs',
+                    'ed'
+                ],
+                'correct': 0,
+                'explanation': 'nano is the most beginner-friendly with an intuitive interface and on-screen help.'
+            },
+            {
+                'type': 'fill_blank',
+                'question': 'In nano, press _____ to exit the editor.',
+                'answer': 'Ctrl+X',
+                'alternatives': ['^X', 'Control+X'],
+                'explanation': 'Ctrl+X (or ^X) exits nano, prompting to save if there are changes.'
+            },
+            {
+                'type': 'true_false',
+                'question': 'Vim has different modes for editing and navigating.',
+                'answer': True,
+                'explanation': 'True. Vim is a modal editor with Normal mode, Insert mode, and Command mode.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'How do you enter insert mode in vim?',
+                'options': [
+                    'Press i',
+                    'Press Ctrl+I',
+                    'Type :insert',
+                    'Press Enter'
+                ],
+                'correct': 0,
+                'explanation': 'Press "i" to enter Insert mode in vim, allowing you to type text.'
+            },
+            {
+                'type': 'command_recall',
+                'question': 'What vim command saves and quits?',
+                'answer': ':wq',
+                'alternatives': [':x', 'ZZ'],
+                'explanation': ':wq writes (saves) and quits. :x and ZZ also work.'
+            },
+            {
+                'type': 'fill_blank',
+                'question': 'In nano, _____ means Ctrl (as in ^X means Ctrl+X).',
+                'answer': '^',
+                'alternatives': ['caret'],
+                'explanation': 'The caret symbol (^) represents the Ctrl key in nano documentation.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'How do you quit vim without saving changes?',
+                'options': [
+                    ':q!',
+                    ':quit',
+                    ':exit',
+                    ':q'
+                ],
+                'correct': 0,
+                'explanation': ':q! force-quits vim without saving (! means force).'
+            },
+            {
+                'type': 'true_false',
+                'question': 'In nano, Ctrl+O saves the file.',
+                'answer': True,
+                'explanation': 'True. Ctrl+O (write Out) saves the file in nano.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'What is vimtutor?',
+                'options': [
+                    'An interactive tutorial for learning vim',
+                    'A vim plugin manager',
+                    'A vim configuration file',
+                    'A vim documentation viewer'
+                ],
+                'correct': 0,
+                'explanation': 'vimtutor is an interactive tutorial that teaches vim basics step-by-step.'
+            },
+            {
+                'type': 'command_recall',
+                'question': 'Which key returns you to normal mode in vim?',
+                'answer': 'Esc',
+                'alternatives': ['Escape'],
+                'explanation': 'Esc (Escape) returns you to Normal mode from any other vim mode.'
             }
         ]
     }
