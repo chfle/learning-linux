@@ -394,6 +394,84 @@ system that can run many processes simultaneously. Key concepts:
                     {'cmd': 'jobs', 'description': 'Show background jobs'}
                 ]
             }
+        ],
+        'quiz': [
+            {
+                'type': 'fill_blank',
+                'question': 'A _____ is a running instance of a program.',
+                'answer': 'process',
+                'explanation': 'A process is a running instance of a program with its own memory space and resources.'
+            },
+            {
+                'type': 'fill_blank',
+                'question': 'Every process has a unique identifier called a _____.',
+                'answer': 'PID',
+                'alternatives': ['Process ID', 'process ID', 'process id'],
+                'explanation': 'PID (Process ID) is a unique number assigned to each process.'
+            },
+            {
+                'type': 'command_recall',
+                'question': 'Which command shows currently running processes?',
+                'answer': 'ps',
+                'alternatives': ['top', 'htop'],
+                'explanation': 'ps displays process status. top and htop are also valid for viewing processes.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'What does "ps aux" show?',
+                'options': [
+                    'All processes from all users with detailed information',
+                    'Only your processes',
+                    'Only system processes',
+                    'Available user accounts'
+                ],
+                'correct': 0,
+                'explanation': '"ps aux" shows all processes (a=all users, u=user-oriented, x=include without tty).'
+            },
+            {
+                'type': 'command_recall',
+                'question': 'Which command provides real-time process monitoring?',
+                'answer': 'top',
+                'alternatives': ['htop'],
+                'explanation': 'top provides real-time, dynamic view of running processes. htop is an enhanced alternative.'
+            },
+            {
+                'type': 'true_false',
+                'question': 'Each process can have child processes.',
+                'answer': True,
+                'explanation': 'True. Processes form a hierarchy where parent processes can spawn child processes.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'What are the typical process states in Linux?',
+                'options': [
+                    'Running, sleeping, stopped, zombie',
+                    'Active, inactive, pending',
+                    'Start, running, end',
+                    'New, ready, terminated'
+                ],
+                'correct': 0,
+                'explanation': 'Linux processes can be running, sleeping (waiting), stopped (paused), or zombie (terminated but not reaped).'
+            },
+            {
+                'type': 'command_recall',
+                'question': 'Which command finds process IDs by name?',
+                'answer': 'pgrep',
+                'alternatives': ['pidof'],
+                'explanation': 'pgrep searches for processes by name and returns their PIDs. pidof also works for some cases.'
+            },
+            {
+                'type': 'true_false',
+                'question': 'Foreground processes block the terminal until they complete.',
+                'answer': True,
+                'explanation': 'True. Foreground processes occupy the terminal, while background processes run without blocking it.'
+            },
+            {
+                'type': 'fill_blank',
+                'question': 'A zombie process is one that has terminated but whose parent has not yet read its _____ code.',
+                'answer': 'exit',
+                'explanation': 'Zombie processes remain in the process table until the parent reads their exit status.'
+            }
         ]
     },
     
@@ -426,6 +504,89 @@ repetitive tasks. Key concepts:
                     {'cmd': 'cat myscript.sh', 'description': 'View script contents'},
                     {'cmd': './myscript.sh', 'description': 'Execute the script'}
                 ]
+            }
+        ],
+        'quiz': [
+            {
+                'type': 'fill_blank',
+                'question': 'The first line of a shell script should be the _____ line.',
+                'answer': 'shebang',
+                'explanation': 'The shebang line (#!/bin/bash) tells the system which interpreter to use.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'What does #!/bin/bash at the start of a script do?',
+                'options': [
+                    'Specifies that the script should be run with bash',
+                    'Makes the script executable',
+                    'Comments out the first line',
+                    'Imports bash functions'
+                ],
+                'correct': 0,
+                'explanation': 'The shebang (#!/bin/bash) tells the system to execute the script using the bash shell.'
+            },
+            {
+                'type': 'command_recall',
+                'question': 'Which command makes a script file executable?',
+                'answer': 'chmod +x',
+                'alternatives': ['chmod u+x'],
+                'explanation': 'chmod +x adds execute permission to make the script runnable.'
+            },
+            {
+                'type': 'true_false',
+                'question': 'Variables in bash are declared using the $ symbol.',
+                'answer': False,
+                'explanation': 'False. Variables are declared without $. The $ is used to access/expand variables (e.g., name="value", echo $name).'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'How do you access the value of a variable named "count"?',
+                'options': [
+                    '$count',
+                    'count',
+                    '&count',
+                    '@count'
+                ],
+                'correct': 0,
+                'explanation': 'Use $variable_name to access variable values in bash scripts.'
+            },
+            {
+                'type': 'fill_blank',
+                'question': 'The _____ code indicates whether a command succeeded or failed.',
+                'answer': 'exit',
+                'alternatives': ['return', 'status'],
+                'explanation': 'Exit codes (or return codes) indicate command success (0) or failure (non-zero).'
+            },
+            {
+                'type': 'true_false',
+                'question': 'An exit code of 0 typically means success.',
+                'answer': True,
+                'explanation': 'True. In Unix/Linux, exit code 0 indicates success, while non-zero indicates errors.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'Which control structure would you use to repeat commands?',
+                'options': [
+                    'for or while loops',
+                    'if statements',
+                    'case statements',
+                    'functions'
+                ],
+                'correct': 0,
+                'explanation': 'Loops (for, while, until) are used to repeat commands in shell scripts.'
+            },
+            {
+                'type': 'command_recall',
+                'question': 'How do you execute a script in the current directory named "script.sh"?',
+                'answer': './script.sh',
+                'alternatives': ['bash script.sh', 'sh script.sh'],
+                'explanation': './script.sh runs the script directly. You can also use "bash script.sh" or "sh script.sh".'
+            },
+            {
+                'type': 'true_false',
+                'question': 'Shell scripts are useful for automating repetitive tasks.',
+                'answer': True,
+                'explanation': 'True. Shell scripts excel at automating system administration tasks and command sequences.'
             }
         ]
     },
@@ -461,6 +622,93 @@ repetitive tasks. Key concepts:
                     {'cmd': 'last', 'description': 'Show recent login history'}
                 ]
             }
+        ],
+        'quiz': [
+            {
+                'type': 'multiple_choice',
+                'question': 'What is the principle of least privilege?',
+                'options': [
+                    'Users should have only the minimum permissions needed',
+                    'Only administrators should have privileges',
+                    'All users should have equal privileges',
+                    'Privileges should be granted generously'
+                ],
+                'correct': 0,
+                'explanation': 'Least privilege means granting only the minimum permissions necessary for users to perform their tasks.'
+            },
+            {
+                'type': 'true_false',
+                'question': 'Setuid files can pose security risks if not properly managed.',
+                'answer': True,
+                'explanation': 'True. Setuid files run with the permissions of the file owner, which can be exploited if misconfigured.'
+            },
+            {
+                'type': 'command_recall',
+                'question': 'Which command shows your current user and group memberships?',
+                'answer': 'id',
+                'explanation': 'The id command displays user ID, group ID, and all group memberships.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'What does a setuid bit (4000 permission) do?',
+                'options': [
+                    'Allows file to execute with owner\'s privileges',
+                    'Makes file read-only',
+                    'Hides the file from listing',
+                    'Encrypts the file contents'
+                ],
+                'correct': 0,
+                'explanation': 'Setuid (4000) allows a file to execute with the privileges of its owner, not the user running it.'
+            },
+            {
+                'type': 'command_recall',
+                'question': 'Which command shows listening network services?',
+                'answer': 'netstat -tulpn',
+                'alternatives': ['ss -tulpn', 'ss', 'netstat'],
+                'explanation': 'netstat -tulpn or ss -tulpn show listening TCP/UDP ports with program names.'
+            },
+            {
+                'type': 'true_false',
+                'question': 'Regular system updates are important for security.',
+                'answer': True,
+                'explanation': 'True. Updates patch security vulnerabilities and are essential for maintaining system security.'
+            },
+            {
+                'type': 'fill_blank',
+                'question': 'The _____ command shows recent login history.',
+                'answer': 'last',
+                'explanation': 'The last command displays login history from system logs.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'Why is log monitoring important for security?',
+                'options': [
+                    'It helps detect unauthorized access and security incidents',
+                    'It speeds up the system',
+                    'It reduces disk space',
+                    'It automatically fixes vulnerabilities'
+                ],
+                'correct': 0,
+                'explanation': 'Log monitoring helps identify suspicious activity, intrusion attempts, and security breaches.'
+            },
+            {
+                'type': 'true_false',
+                'question': 'File permissions are the only security mechanism in Linux.',
+                'answer': False,
+                'explanation': 'False. Linux security includes permissions, SELinux/AppArmor, firewalls, encryption, and many other mechanisms.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'What is the purpose of sudo?',
+                'options': [
+                    'Allow authorized users to run commands as root',
+                    'Create new user accounts',
+                    'Monitor system performance',
+                    'Scan for viruses'
+                ],
+                'correct': 0,
+                'explanation': 'sudo (superuser do) allows permitted users to execute commands with elevated (typically root) privileges.'
+            }
         ]
     },
     
@@ -494,6 +742,88 @@ repetitive tasks. Key concepts:
                     {'cmd': 'vmstat 1 5', 'description': 'Virtual memory statistics'},
                     {'cmd': 'sar -u 1 5', 'description': 'CPU utilization over time (if available)'}
                 ]
+            }
+        ],
+        'quiz': [
+            {
+                'type': 'multiple_choice',
+                'question': 'What are the four main system resource bottlenecks?',
+                'options': [
+                    'CPU, Memory, I/O, Network',
+                    'Disk, RAM, Cache, Swap',
+                    'Processes, Threads, Files, Sockets',
+                    'Hardware, Software, Network, Users'
+                ],
+                'correct': 0,
+                'explanation': 'The four main bottleneck areas are CPU, Memory (RAM), I/O (disk), and Network.'
+            },
+            {
+                'type': 'command_recall',
+                'question': 'Which command shows system load average?',
+                'answer': 'uptime',
+                'alternatives': ['w', 'top'],
+                'explanation': 'uptime displays system load averages. Commands like w and top also show this information.'
+            },
+            {
+                'type': 'command_recall',
+                'question': 'Which command displays memory usage in human-readable format?',
+                'answer': 'free -h',
+                'explanation': 'free -h shows memory usage with human-readable units (MB, GB).'
+            },
+            {
+                'type': 'true_false',
+                'question': 'Performance tuning should always start with measuring baseline performance.',
+                'answer': True,
+                'explanation': 'True. You need baseline measurements to determine if optimizations actually improve performance.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'What does the load average represent?',
+                'options': [
+                    'Average number of processes in runnable or waiting state',
+                    'CPU temperature over time',
+                    'Network bandwidth usage',
+                    'Disk space available'
+                ],
+                'correct': 0,
+                'explanation': 'Load average shows the average number of processes running or waiting for CPU time.'
+            },
+            {
+                'type': 'command_recall',
+                'question': 'Which command shows disk space usage?',
+                'answer': 'df -h',
+                'alternatives': ['df'],
+                'explanation': 'df -h displays disk space usage in human-readable format for all mounted filesystems.'
+            },
+            {
+                'type': 'fill_blank',
+                'question': 'The _____ command provides I/O statistics for block devices.',
+                'answer': 'iostat',
+                'explanation': 'iostat reports CPU statistics and I/O statistics for devices and partitions.'
+            },
+            {
+                'type': 'true_false',
+                'question': 'vmstat provides information about virtual memory and system activity.',
+                'answer': True,
+                'explanation': 'True. vmstat reports virtual memory statistics including processes, memory, paging, I/O, and CPU.'
+            },
+            {
+                'type': 'multiple_choice',
+                'question': 'What should you do after applying performance optimizations?',
+                'options': [
+                    'Measure and validate the improvements',
+                    'Immediately apply more optimizations',
+                    'Restart the system',
+                    'Delete the baseline measurements'
+                ],
+                'correct': 0,
+                'explanation': 'Always measure after optimizations to verify improvements and ensure you didn\'t introduce regressions.'
+            },
+            {
+                'type': 'true_false',
+                'question': 'You should optimize all parts of the system simultaneously for best results.',
+                'answer': False,
+                'explanation': 'False. Apply targeted optimizations one at a time so you can measure their individual impact.'
             }
         ]
     },
